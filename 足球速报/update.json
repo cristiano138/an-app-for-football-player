@@ -1,0 +1,8 @@
+﻿{
+  "version": "1.0.6",
+  "versionCode": 2005,
+  "minVersionCode": 0,
+  "apkUrl": "https://football-daily-brief-22553.app.workbuddy.host/football-v1.0.6.apk",
+  "apkUrlArm64": "https://football-daily-brief-22553.app.workbuddy.host/football-v1.0.6-arm64.apk",
+  "notes": "重要：修复版本号导致的无法检测更新问题（请务必更新到本版本，之后可正常收到后续更新）；修复长文字被省略截断、详情页滑动卡顿、设置页时间显示错误；界面优化。"
+}

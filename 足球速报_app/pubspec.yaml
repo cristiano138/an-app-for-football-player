@@ -1,0 +1,40 @@
+name: football
+description: "足球速报 App"
+publish_to: 'none'
+version: 1.0.6+2005
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  http: ^1.2.0
+  shared_preferences: ^2.3.0
+  path_provider: ^2.1.0
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.0
+  url_launcher: ^6.3.0
+  file_selector: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/report-data.js
+    - assets/icon/icon-512.png
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  remove_alpha_ios: true
+  image_path: "assets/icon/icon-512.png"
+  adaptive_icon_background: "#0D100F"
+  adaptive_icon_foreground: "assets/icon/icon-512.png"

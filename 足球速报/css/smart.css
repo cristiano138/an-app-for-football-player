@@ -1,0 +1,210 @@
+/* ============================================================================
+ * 足球速报 · 智能层样式（搜索页 / 问 AI 页）
+ * 沿用 index.html 里的主题变量（--gr / --card / --line ...），保证风格一致
+ * ========================================================================== */
+
+/* ---------------- 列表页入口条 ---------------- */
+.sm-entry { display: flex; gap: 9px; margin-bottom: 13px; }
+.sm-entry .sm-b {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; text-align: left;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 13px; color: var(--tx); font-family: inherit; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .22), 0 3px 12px rgba(0, 0, 0, .26);
+  transition: transform .12s, border-color .12s;
+}
+.sm-entry .sm-b:active { transform: scale(.98); }
+.sm-entry .sm-b.ai { border-color: rgba(53, 192, 143, .38); }
+.sm-entry .ic { font-size: 18px; flex: none; line-height: 1; }
+.sm-entry .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sm-entry .tx b { font-size: 13.5px; font-weight: 800; letter-spacing: .2px; }
+.sm-entry .tx i {
+  font-style: normal; font-size: 10.5px; color: var(--mu); line-height: 1.4;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sm-entry .go { color: var(--gr); font-size: 18px; font-weight: 800; flex: none; }
+
+/* ---------------- 搜索页 ---------------- */
+/* top 用 JS 量出来的 header 真实高度，避免被 sticky header 盖住 */
+.sm-search {
+  position: sticky; top: var(--sm-hd, 48px); z-index: 30;
+  padding: 6px 0 9px; background: var(--bg);
+  margin: 0 -11px; padding-left: 11px; padding-right: 11px;
+}
+.sm-box {
+  display: flex; align-items: center; gap: 8px; background: var(--card);
+  border: 1px solid var(--line2); border-radius: 13px; padding: 0 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .25);
+}
+.sm-box:focus-within { border-color: var(--gr); box-shadow: 0 0 0 3px var(--gr-l); }
+.sm-box .mg { font-size: 15px; opacity: .7; flex: none; }
+.sm-box input {
+  flex: 1; min-width: 0; background: none; border: none; outline: none;
+  color: var(--tx); font-size: 15px; font-family: inherit; padding: 12px 0;
+}
+.sm-box input::-webkit-search-cancel-button { display: none; }
+.sm-box .clr {
+  flex: none; background: var(--soft2); border: none; color: var(--tx2);
+  width: 22px; height: 22px; border-radius: 50%; font-size: 14px; line-height: 1;
+  cursor: pointer; font-family: inherit;
+}
+.sm-quick { display: flex; gap: 7px; overflow-x: auto; margin-top: 9px; padding-bottom: 2px; }
+.sm-quick::-webkit-scrollbar { display: none; }
+.sm-quick button {
+  flex: none; background: var(--chip); border: 1px solid var(--line); color: var(--tx2);
+  font-size: 12px; font-family: inherit; border-radius: 20px; padding: 5px 12px; cursor: pointer;
+}
+.sm-quick button:active { background: var(--gr-l); color: var(--gr-lt); border-color: var(--gr); }
+
+.sm-empty { text-align: center; color: var(--mu); padding: 60px 22px; font-size: 13.5px; line-height: 1.9; }
+.sm-empty span { display: block; font-size: 11.5px; opacity: .8; margin-top: 6px; }
+.sm-range {
+  font-size: 11.5px; color: var(--gr-lt); background: var(--gr-l); border-radius: 9px;
+  padding: 7px 11px; margin-bottom: 8px; border: 1px solid rgba(53, 192, 143, .25);
+}
+.sm-count { font-size: 11.5px; color: var(--mu); margin: 2px 2px 9px; }
+.sm-count b { color: var(--gr-lt); font-size: 13px; }
+
+.sm-day { margin-bottom: 13px; }
+.sm-dh {
+  font-size: 11.5px; font-weight: 800; color: var(--mu); letter-spacing: .5px;
+  margin: 0 2px 6px; display: flex; align-items: center; gap: 7px;
+}
+.sm-dh:after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.sm-hit {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 12px; margin-bottom: 7px; cursor: pointer; transition: border-color .12s;
+}
+.sm-hit:active { border-color: var(--gr); }
+.sm-ht { display: flex; align-items: flex-start; gap: 7px; }
+.sm-ht .tag {
+  flex: none; font-size: 10px; font-weight: 800; color: var(--gr-lt); background: var(--gr-l);
+  border-radius: 5px; padding: 2px 6px; margin-top: 1px; letter-spacing: .2px;
+}
+.sm-ht .ti { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 700; line-height: 1.45; }
+.sm-hp {
+  font-size: 12px; color: var(--tx2); line-height: 1.7; margin-top: 6px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+mark { background: rgba(233, 185, 75, .3); color: #FFE9A8; border-radius: 3px; padding: 0 2px; }
+
+/* ---------------- 问 AI 页 ---------------- */
+.ai-status {
+  display: flex; align-items: center; gap: 8px; font-size: 11.5px; line-height: 1.6;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 12px; margin-bottom: 11px; color: var(--tx2);
+}
+.ai-status b { color: var(--tx); }
+.ai-status .d { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.ai-status .msg { flex: 1; min-width: 0; }
+.ai-status.ok { border-left: 3px solid var(--gr); }
+.ai-status.ok .d { background: var(--gr); box-shadow: 0 0 7px var(--gr); }
+.ai-status.warn { border-left: 3px solid var(--yel); }
+.ai-status.warn .d { background: var(--yel); }
+.ai-status button {
+  flex: none; background: var(--soft2); border: 1px solid var(--line);
+  color: var(--tx2); font-size: 11.5px; font-family: inherit; border-radius: 8px;
+  padding: 4px 10px; cursor: pointer;
+}
+
+.ai-set {
+  background: var(--card); border: 1px solid var(--line2); border-radius: 14px;
+  padding: 14px; margin-bottom: 12px;
+}
+.ai-set label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+.ai-set label span { font-weight: 400; color: var(--mu); font-size: 10.5px; margin-left: 5px; }
+.ai-set input {
+  width: 100%; background: var(--soft); border: 1px solid var(--line); border-radius: 9px;
+  padding: 9px 11px; color: var(--tx); font-size: 13px; font-family: inherit;
+  outline: none; margin-bottom: 11px;
+}
+.ai-set input:focus { border-color: var(--gr); }
+.ai-set-btns { display: flex; gap: 8px; }
+.ai-set-btns button {
+  flex: 1; border: 1px solid var(--line); background: var(--soft2); color: var(--tx2);
+  border-radius: 9px; padding: 9px 0; font-size: 12.5px; font-family: inherit; cursor: pointer;
+}
+.ai-set-btns button.ok { background: var(--gr-dk); border-color: var(--gr-dk); color: #fff; font-weight: 700; }
+.ai-set-btns button.del { flex: 0 0 74px; color: var(--red); }
+.ai-test { font-size: 11.5px; margin-top: 9px; color: var(--mu); line-height: 1.6; }
+.ai-test.ok { color: var(--gr-lt); }
+.ai-test.bad { color: var(--red); }
+
+.ai-hello { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 14px; }
+.ai-hello .t { font-size: 14.5px; font-weight: 800; margin-bottom: 7px; }
+.ai-hello .s { font-size: 12px; color: var(--tx2); line-height: 1.8; }
+.ai-hello .s b { color: var(--gr-lt); }
+
+.ai-q {
+  background: var(--gr-dk); color: #fff; border-radius: 13px 13px 4px 13px;
+  padding: 10px 13px; font-size: 13.5px; line-height: 1.6; margin: 12px 0 8px auto;
+  max-width: 84%; width: fit-content; font-weight: 600;
+}
+.ai-a {
+  background: var(--card); border: 1px solid var(--line); border-radius: 13px;
+  padding: 12px 13px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+}
+.ai-a .txt { font-size: 13.5px; line-height: 1.82; color: var(--tx); }
+.ai-a.loading { display: flex; align-items: center; gap: 9px; color: var(--mu); font-size: 12.5px; }
+.spin {
+  width: 13px; height: 13px; border-radius: 50%; flex: none;
+  border: 2px solid var(--line2); border-top-color: var(--gr);
+  animation: fbspin .7s linear infinite;
+}
+@keyframes fbspin { to { transform: rotate(360deg); } }
+
+.route {
+  display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 11px;
+  padding-top: 10px; border-top: 1px dashed var(--line); font-size: 11px; color: var(--mu);
+}
+.route b { color: var(--gr-lt); font-weight: 700; }
+.notice {
+  margin-top: 9px; font-size: 11.5px; color: var(--yel); background: var(--yelbg);
+  border-radius: 9px; padding: 8px 10px; line-height: 1.65;
+}
+
+.evi { margin-top: 11px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.evi summary {
+  font-size: 11.5px; color: var(--gr); cursor: pointer; font-weight: 700;
+  list-style: none; outline: none;
+}
+.evi summary::-webkit-details-marker { display: none; }
+.evi summary:before { content: "›"; display: inline-block; margin-right: 5px; transition: transform .15s; }
+.evi[open] summary:before { transform: rotate(90deg); }
+.evibody { margin-top: 8px; }
+.evi-item {
+  display: flex; align-items: baseline; gap: 7px; padding: 7px 9px; border-radius: 8px;
+  background: var(--soft); margin-bottom: 5px; cursor: pointer; font-size: 11.5px;
+}
+.evi-item:active { background: var(--soft2); }
+.evi-item .dt { flex: none; color: var(--gr-lt); font-weight: 800; font-size: 10.5px; }
+.evi-item .sn { flex: none; color: var(--mu); font-size: 10.5px; }
+.evi-item .tx { flex: 1; min-width: 0; color: var(--tx2); line-height: 1.5; }
+
+.ai-samples { margin: 14px 0 10px; }
+.ai-ttl { font-size: 11.5px; color: var(--mu); margin-bottom: 8px; }
+.ai-samples button {
+  display: block; width: 100%; text-align: left; background: var(--card);
+  border: 1px solid var(--line); color: var(--tx2); border-radius: 11px;
+  padding: 10px 12px; font-size: 12.5px; font-family: inherit; cursor: pointer;
+  margin-bottom: 7px; line-height: 1.5;
+}
+.ai-samples button:before { content: "💬 "; opacity: .8; }
+.ai-samples button:active { border-color: var(--gr); color: var(--tx); }
+
+/* 底部提问栏：固定在 tabbar 之上，滚到哪都能问 */
+.ai-ask {
+  position: sticky; bottom: 0; z-index: 40; display: flex; gap: 8px;
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent, var(--bg) 26%);
+}
+.ai-ask input {
+  flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--line2);
+  border-radius: 12px; padding: 12px 13px; color: var(--tx); font-size: 14px;
+  font-family: inherit; outline: none; box-shadow: 0 2px 10px rgba(0, 0, 0, .25);
+}
+.ai-ask input:focus { border-color: var(--gr); }
+.ai-ask button {
+  flex: none; background: var(--gr-dk); color: #fff; border: none; border-radius: 12px;
+  padding: 0 20px; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer;
+}
+.ai-ask button:disabled { opacity: .5; }

@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>足球速报</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0D100F">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="足球速报">
+<meta name="description" content="每日全球足球赛事速报：逐球记录含助攻与全过程、赛前赛后采访原话、球星动态、转会速递、焦点前瞻。">
+<meta property="og:title" content="足球速报">
+<meta property="og:description" content="每天 07:00 自动更新 · 逐球记录 + 赛前赛后采访 + 焦点前瞻">
+<meta property="og:type" content="website">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  color-scheme:dark;
+  /* 主色（深底上提亮） */
+  --gr:#35C08F; --gr-lt:#4ADE9F; --gr-l:rgba(53,192,143,.14); --gr-dk:#14805D; --gr-dk2:#0A4E3A;
+  /* 底 / 卡 / 文字 / 线 */
+  --bg:#0D100F; --card:#171B1A; --tx:#E9EDEC; --tx2:#C2C9C6; --mu:#8B9490;
+  --line:rgba(255,255,255,.09); --line2:#2C3230;
+  /* 内嵌浅块（深色下的"灰底"） */
+  --soft:#1E2322; --soft2:#262C2A; --softblu:#1B2431; --chip:rgba(255,255,255,.07);
+  /* 记分牌（保持浅底，像真实记分牌） */
+  --num-bg:#E7ECEA; --num-tx:#0B5D46;
+  /* 强调色 + 其淡底 */
+  --red:#FF6B5B; --yel:#E9B94B; --pur:#A78BFA; --ora:#F2893E; --sla:#8FA3B0; --blu:#63AEFA;
+  --redbg:rgba(255,107,91,.14); --yelbg:rgba(233,185,75,.14); --purbg:rgba(167,139,250,.14);
+  --orabg:rgba(242,137,62,.14); --slabg:rgba(143,163,176,.14); --blubg:rgba(99,174,250,.14);
+  --tabbar-bg:rgba(20,25,24,.92);
+}
+/* 背景：底色 + 顶部光晕 */
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background-color:var(--bg);
+  background-image:radial-gradient(1100px 400px at 50% -6%,rgba(53,192,143,.11),transparent 62%);
+  background-repeat:no-repeat;background-attachment:fixed;
+  color:var(--tx);line-height:1.6;-webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom)}
+main{max-width:720px;margin:0 auto;padding:12px 11px 44px}
+.sh{box-shadow:0 1px 2px rgba(0,0,0,.22),0 3px 12px rgba(0,0,0,.26)}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:60;color:#fff;
+  background:linear-gradient(135deg,var(--gr-dk),var(--gr-dk2));
+  padding:calc(env(safe-area-inset-top) + 11px) 14px 11px;
+  display:flex;align-items:center;gap:10px;box-shadow:0 2px 14px rgba(0,0,0,.4);border-bottom:1px solid rgba(255,255,255,.07)}
+header .back{display:none;background:rgba(255,255,255,.18);border:none;color:#fff;font-size:18px;
+  line-height:1;cursor:pointer;padding:4px 11px 6px;border-radius:9px}
+header h1{font-size:16.5px;font-weight:700;letter-spacing:.6px}
+header .sub{font-size:11.5px;opacity:.78;margin-left:auto}
+
+/* ---------- 区块标题 ---------- */
+.sec{display:flex;align-items:center;gap:8px;margin:17px 3px 9px}
+.sec .bar{width:3.5px;height:15px;border-radius:2px;background:var(--gr)}
+.sec h2{font-size:15px;font-weight:800;letter-spacing:.4px}
+.sec h2 .si{margin-right:5px;font-size:13.5px}
+.sec .n{font-size:11px;color:var(--mu);margin-left:auto;background:var(--chip);
+  border:1px solid var(--line);border-radius:20px;padding:2px 9px}
+
+/* =============== 列表页 =============== */
+.lcard{background:var(--card);border-radius:15px;margin-bottom:11px;overflow:hidden;cursor:pointer;
+  border:1px solid var(--line);transition:transform .12s;box-shadow:0 1px 2px rgba(0,0,0,.22),0 3px 12px rgba(0,0,0,.26)}
+.lcard:active{transform:scale(.985)}
+.lhead{background:linear-gradient(135deg,var(--gr-dk),var(--gr-dk2));color:#fff;padding:11px 14px;
+  display:flex;align-items:center;gap:9px;position:relative;overflow:hidden}
+.lhead:after{content:"";position:absolute;right:-24px;top:-32px;width:104px;height:104px;
+  border-radius:50%;border:11px solid rgba(255,255,255,.08)}
+.lhead .dp{font-size:12.5px;font-weight:800;letter-spacing:.4px}
+.lhead .wk{font-size:10.5px;opacity:.72;background:rgba(255,255,255,.16);border-radius:20px;padding:1px 7px}
+.lhead .cnt{font-size:10.5px;opacity:.8;margin-left:auto;background:rgba(255,255,255,.14);
+  border-radius:20px;padding:2px 8px;z-index:1}
+.lbody{padding:12px 14px 13px}
+.lbody .ttl{font-size:16px;font-weight:800;line-height:1.4;letter-spacing:.2px}
+.lbody .sm{font-size:12px;color:var(--mu);margin-top:5px;line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.scores{margin-top:10px;background:var(--soft);border-radius:11px;padding:8px 10px;
+  display:flex;flex-direction:column;gap:5px}
+.sline{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.sline .h{flex:1;text-align:right;font-weight:700;color:var(--tx)}
+.sline .s{font-weight:800;color:#fff;background:var(--gr-dk);border-radius:6px;
+  padding:1px 8px;font-size:11.5px;letter-spacing:.5px;min-width:46px;text-align:center}
+.sline .a{flex:1;font-weight:700;color:var(--tx)}
+.more{margin-top:9px;font-size:11.5px;color:var(--gr);font-weight:700;display:flex;
+  align-items:center;justify-content:flex-end;gap:3px}
+.empty{text-align:center;color:var(--mu);padding:70px 20px;font-size:13.5px;line-height:2}
+.retry{background:var(--gr-dk);color:#fff;border:none;border-radius:11px;padding:10px 18px;
+  font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,.3)}
+
+/* =============== hero =============== */
+.hero{position:relative;overflow:hidden;border-radius:17px;padding:17px 16px 16px;color:#fff;
+  background:linear-gradient(135deg,var(--gr-dk),var(--gr-dk2));margin-bottom:11px;
+  box-shadow:0 4px 16px rgba(11,93,70,.26)}
+.hero:before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 26px,rgba(0,0,0,.025) 26px 52px)}
+.hero:after{content:"";position:absolute;right:-34px;top:-38px;width:158px;height:158px;
+  border-radius:50%;border:15px solid rgba(255,255,255,.075);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.hero .d{font-size:11.5px;opacity:.82;letter-spacing:.6px;font-weight:600}
+.hero .t{font-size:21px;font-weight:800;margin-top:2px;letter-spacing:.3px;line-height:1.3}
+.hero .st{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.hero .st span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.14);
+  border-radius:9px;padding:5px 10px;font-size:11.5px;font-weight:700}
+.hero .st span b{font-size:13px;margin-right:2px}
+
+/* ---------- 覆盖范围 ---------- */
+.cov{background:var(--card);border-radius:14px;padding:6px 14px;margin-bottom:11px;
+  border:1px solid var(--line);border-left:3.5px solid var(--gr);
+  box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.cov .row{display:flex;gap:10px;padding:8px 0;font-size:12.5px;line-height:1.62}
+.cov .row+.row{border-top:1px dashed var(--line)}
+.cov .k{color:var(--gr);font-weight:800;font-size:11.5px;flex:0 0 60px;letter-spacing:.2px}
+.cov .v{color:var(--tx2);flex:1;min-width:0}
+.cov .v em{font-style:italic;color:var(--mu)}
+
+/* =============== 比赛卡 =============== */
+.mcard{background:var(--card);border-radius:15px;margin-bottom:12px;overflow:hidden;
+  border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.22),0 3px 12px rgba(0,0,0,.26)}
+.mhead{position:relative;overflow:hidden;color:#fff;padding:13px 14px 12px;
+  background:linear-gradient(140deg,#14805D,#0A4E3A)}
+.mhead:before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(115deg,rgba(255,255,255,.04) 0 18px,transparent 18px 36px)}
+.mhead>*{position:relative;z-index:1}
+.mtop{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.mno{width:19px;height:19px;border-radius:6px;background:rgba(255,255,255,.2);color:#fff;
+  font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.lg{font-size:10.5px;font-weight:700;color:#fff;background:rgba(255,255,255,.15);
+  padding:2px 8px;border-radius:5px;letter-spacing:.3px}
+.score{display:flex;align-items:center;gap:10px}
+.score .tm{flex:1;min-width:0}
+.score .tm.r{text-align:right}
+.score .nm{font-size:17px;font-weight:800;line-height:1.25;letter-spacing:.2px;color:rgba(255,255,255,.5)}
+.score .tm.w .nm{color:#fff}
+.score .tm.w .sd{color:rgba(255,255,255,.75)}
+.score .sd{font-size:10px;color:rgba(255,255,255,.42);margin-top:1px;letter-spacing:.6px;font-weight:600}
+.score .num{flex:none;font-size:26px;font-weight:800;letter-spacing:.5px;color:var(--num-tx);
+  background:var(--num-bg);border-radius:11px;padding:4px 13px;line-height:1.15;
+  box-shadow:0 2px 6px rgba(0,0,0,.16)}
+.mmeta{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.mmeta span{font-size:10.5px;color:rgba(255,255,255,.82);background:rgba(255,255,255,.12);
+  border-radius:5px;padding:2px 7px}
+
+/* ---------- 进球分布轴 ---------- */
+.tl{padding:11px 0 9px;background:var(--soft);border-bottom:1px solid var(--line)}
+.tlcap{font-size:10.5px;color:var(--mu);font-weight:700;letter-spacing:.4px;
+  padding:0 14px 6px;display:flex;align-items:center;gap:6px}
+.tlcap .kh,.tlcap .ka{display:inline-flex;align-items:center;gap:4px}
+.tlcap .kh{color:var(--gr)} .tlcap .ka{color:var(--sla)}
+.tlcap .kh i{background:var(--gr)} .tlcap .ka i{background:var(--sla)}
+.tlrow{position:relative;height:26px;margin:0 16px}
+.tlrow.dn{height:24px}
+.tld{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;
+  align-items:center;gap:2px;white-space:nowrap}
+.tlrow.up .tld{bottom:0}
+.tlrow.dn .tld{top:0}
+.tld .lb{font-size:9.5px;font-weight:800;line-height:1}
+.tld .dt{width:9px;height:9px;border-radius:50%;border:2px solid var(--card);flex:none}
+.tld.h .lb{color:var(--gr)} .tld.h .dt{background:var(--gr);box-shadow:0 0 0 1.5px var(--gr)}
+.tld.a .lb{color:var(--sla)} .tld.a .dt{background:var(--sla);box-shadow:0 0 0 1.5px var(--sla)}
+.tlrow.dn .tld{flex-direction:column-reverse}
+.tlaxis{position:relative;height:2px;background:var(--line2);border-radius:2px;margin:0 16px}
+.tlaxis span{position:absolute;top:3px;font-size:9px;color:var(--mu);font-weight:600}
+.tlaxis .t0{left:0} .tlaxis .t9{right:0}
+
+/* ---------- 内容块 ---------- */
+.blk{padding:13px 14px;border-bottom:1px solid var(--line)}
+.blk:last-child{border-bottom:none}
+.blk h4{font-size:11.5px;font-weight:800;color:var(--gr);letter-spacing:.6px;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.blk h4 i{width:5px;height:5px;border-radius:50%;background:var(--gr);display:block;flex:none}
+.blk h4 .cn{margin-left:auto;color:var(--mu);font-weight:700;letter-spacing:0}
+
+/* ---------- 进球详情 ---------- */
+.goal{position:relative;padding:0 0 12px 44px}
+.goal:before{content:"";position:absolute;left:14px;top:23px;bottom:-1px;width:1.5px;background:var(--line2)}
+.goal:last-child{padding-bottom:0}
+.goal:last-child:before{display:none}
+.goal .tm{position:absolute;left:0;top:1px;min-width:30px;height:21px;border-radius:6px;
+  background:var(--gr);color:#fff;font-size:10.5px;font-weight:800;display:flex;
+  align-items:center;justify-content:center;padding:0 5px;letter-spacing:-.2px}
+.ghd{display:flex;align-items:center;flex-wrap:wrap;gap:5px;line-height:1.4}
+.ghd .team{font-size:11px;font-weight:800;color:var(--mu);display:flex;align-items:center;gap:4px}
+.ghd .team i{width:6px;height:6px;border-radius:50%;display:block;background:#C9C9C3;flex:none}
+.ghd .team.home i{background:var(--gr)}
+.ghd .team.away i{background:var(--sla)}
+.ghd .who{font-size:14px;font-weight:800}
+.asst{font-size:10.5px;font-weight:800;border-radius:20px;padding:1.5px 8px;letter-spacing:.2px}
+.asst.y{color:var(--gr);background:var(--gr-l)}
+.asst.n{color:var(--mu);background:var(--soft2)}
+.asst.o{color:var(--red);background:var(--redbg)}
+.gdesc{font-size:12.5px;color:var(--tx2);margin-top:4px;line-height:1.65;
+  border-left:2px solid var(--line2);padding-left:9px}
+.gdesc em{font-style:italic;color:var(--mu)}
+
+/* ---------- 重大事件 chips ---------- */
+.evs{display:flex;flex-wrap:wrap;gap:6px}
+.ev{display:inline-flex;align-items:flex-start;gap:7px;max-width:100%;
+  background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:5px 9px}
+.evl{font-size:10.5px;font-weight:800;border-radius:5px;padding:1.5px 6px;flex:none;
+  line-height:1.45;white-space:nowrap}
+.evt{font-size:12px;color:var(--tx2);line-height:1.6;min-width:0;word-break:break-word}
+.l.red{color:var(--red);background:var(--redbg)}
+.l.yel{color:var(--yel);background:var(--yelbg)}
+.l.pur{color:var(--pur);background:var(--purbg)}
+.l.ora{color:var(--ora);background:var(--orabg)}
+.l.sla{color:var(--sla);background:var(--slabg)}
+.l.gr{color:var(--gr);background:var(--gr-l)}
+.l.def{color:var(--mu);background:var(--soft2)}
+
+/* ---------- 采访 ---------- */
+.qtag{font-size:10.5px;color:var(--mu);font-weight:800;margin:0 0 6px;letter-spacing:.6px;
+  display:flex;align-items:center;gap:6px}
+.qtag:after{content:"";flex:1;height:1px;background:var(--line)}
+.qtag.mt{margin-top:11px}
+.qbox{position:relative;background:var(--soft);border-radius:11px;padding:9px 12px 9px 26px;
+  margin-bottom:7px;border-left:3px solid var(--gr)}
+.qbox.post{border-left-color:var(--blu);background:var(--softblu)}
+.qbox:last-child{margin-bottom:0}
+.qbox:before{content:"\201C";position:absolute;left:9px;top:1px;font-family:Georgia,"Times New Roman",serif;
+  font-size:28px;line-height:1;color:rgba(15,110,86,.28)}
+.qbox.post:before{color:rgba(24,95,165,.28)}
+.qbox .sp{font-size:11px;font-weight:800;color:var(--gr);margin-bottom:2px}
+.qbox.post .sp{color:var(--blu)}
+.qbox .qt{font-size:12.5px;color:var(--tx2);line-height:1.65}
+.qbox .qt em{font-style:italic;color:var(--mu)}
+
+/* ---------- 来源 chips ---------- */
+.srcs{display:flex;flex-wrap:wrap;gap:5px}
+.srcs a,.srcs span{font-size:11px;color:var(--blu);background:var(--blubg);border-radius:20px;
+  padding:3px 9px;text-decoration:none;font-weight:600}
+.srcs span{color:var(--mu);background:var(--soft2)}
+
+/* ---------- 其他比分 ---------- */
+.ocard{background:var(--card);border-radius:15px;padding:4px 14px;border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 3px 12px rgba(0,0,0,.26)}
+.orow{padding:10px 0;border-bottom:1px dashed var(--line)}
+.orow:last-child{border-bottom:none}
+.orow .olg{font-size:10.5px;color:var(--mu);font-weight:700;letter-spacing:.3px}
+.oline{display:flex;align-items:center;gap:9px;margin-top:3px}
+.oline .oth{flex:1;text-align:right;font-size:13.5px;font-weight:700;color:var(--mu)}
+.oline .ota{flex:1;font-size:13.5px;font-weight:700;color:var(--mu)}
+.oline .w{color:var(--tx)}
+.oline .osc{flex:none;font-weight:800;font-size:13.5px;color:#fff;background:var(--sla);
+  border-radius:7px;padding:1px 10px;letter-spacing:.5px}
+.onote{font-size:12px;color:var(--mu);margin-top:4px;line-height:1.6}
+
+/* ---------- 动态列表（球星动态 / 足坛动态 / 转会速递 / 赛程预告） ---------- */
+.icard{background:var(--card);border-radius:15px;padding:5px 14px;border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 3px 12px rgba(0,0,0,.26)}
+.irow{display:flex;gap:10px;padding:11px 0;border-bottom:1px dashed var(--line)}
+.irow:last-child{border-bottom:none}
+.irow .ico{flex:none;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.5px;
+  background:var(--gr-dk)}
+.irow.t-star .ico{background:linear-gradient(135deg,#C05621,#8F3D12)}
+.irow.t-world .ico{background:linear-gradient(135deg,#185FA5,#0F4173)}
+.irow.t-trans .ico{background:linear-gradient(135deg,#6D4AFF,#4A2FC4)}
+.irow.t-sch .ico{background:linear-gradient(135deg,#B7791F,#8A5A10)}
+.irow .ibody{flex:1;min-width:0}
+.irow .ihead{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.irow .iname{font-size:14.5px;font-weight:800;letter-spacing:.2px}
+.irow .itag{font-size:10.5px;font-weight:800;border-radius:20px;padding:1.5px 8px;
+  color:var(--gr);background:var(--gr-l)}
+.irow.t-star .itag{color:var(--ora);background:var(--orabg)}
+.irow.t-world .itag{color:var(--blu);background:var(--blubg)}
+.irow.t-trans .itag{color:var(--pur);background:var(--purbg)}
+.irow.t-sch .itag{color:var(--yel);background:var(--yelbg)}
+.irow .itext{font-size:12.5px;color:var(--tx2);line-height:1.68;margin-top:4px;
+  border-left:2px solid var(--line2);padding-left:9px}
+.irow .itext em{font-style:italic;color:var(--mu)}
+
+/* ---------- 焦点前瞻（分版块） ---------- */
+.pvwrap{margin-bottom:12px}
+.pvcard{background:var(--card);border-radius:15px;border:1px solid var(--line);overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 3px 12px rgba(0,0,0,.26)}
+.pvgrp{color:#fff;padding:9px 14px;font-size:12px;font-weight:800;letter-spacing:.5px;
+  display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,#14805D,#0A4E3A)}
+.pvgrp .cn{margin-left:auto;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.82);
+  letter-spacing:0;flex:none}
+.pvgrp.p2{background:linear-gradient(135deg,#C05621,#8F3D12)}
+.pvgrp.p3{background:linear-gradient(135deg,#185FA5,#0F4173)}
+.pvgrp.p4{background:linear-gradient(135deg,#6D4AFF,#4A2FC4)}
+.pvitem{padding:12px 14px;border-bottom:1px dashed var(--line)}
+.pvitem:last-child{border-bottom:none}
+.pvtop{display:flex;align-items:flex-start;flex-wrap:wrap;gap:6px}
+.pvtime{font-size:10.5px;font-weight:800;color:#fff;background:var(--gr-dk);
+  border-radius:5px;padding:2.5px 7px;letter-spacing:.2px;flex:none}
+.pvlg{font-size:10.5px;font-weight:700;color:var(--mu);background:var(--soft2);
+  border-radius:5px;padding:2.5px 7px;flex:none}
+.pvvs{font-size:15px;font-weight:800;letter-spacing:.2px;flex-basis:100%;margin-top:2px;
+  line-height:1.4}
+.pvd{margin-top:8px;border-left:2px solid var(--line2);padding-left:10px}
+.pvr{display:flex;gap:8px;margin-top:5px}
+.pvr:first-child{margin-top:0}
+.pvl{flex:none;font-size:10.5px;font-weight:800;color:var(--gr);background:var(--gr-l);
+  border-radius:20px;padding:1.5px 8px;line-height:1.55;margin-top:2px}
+.pvt{flex:1;min-width:0;font-size:12.5px;color:var(--tx2);line-height:1.68;word-break:break-word}
+.pvt em{font-style:italic;color:var(--mu)}
+
+/* ---------- 来源附录 ---------- */
+details.ref{background:var(--card);border-radius:12px;margin-bottom:7px;border:1px solid var(--line);
+  overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+details.ref summary{padding:10px 13px;font-size:12.5px;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;gap:7px;list-style:none}
+details.ref summary::-webkit-details-marker{display:none}
+details.ref summary .cn{font-size:10.5px;color:var(--mu);font-weight:700;margin-left:auto;
+  background:var(--soft2);border-radius:20px;padding:1px 8px}
+details.ref summary:before{content:"›";color:var(--gr);font-size:16px;font-weight:800;
+  transition:transform .18s;display:inline-block}
+details.ref[open] summary:before{transform:rotate(90deg)}
+.rlist{padding:0 13px 11px 28px}
+.rlist a{display:block;font-size:12px;color:var(--blu);text-decoration:none;
+  padding:3.5px 0;word-break:break-all;line-height:1.5}
+.rlist a:before{content:"↗ ";opacity:.55}
+.rlist span{display:block;font-size:12px;color:var(--mu);padding:3.5px 0}
+
+/* ---------- markdown 兜底 ---------- */
+.md{background:var(--card);border-radius:15px;padding:17px 15px;border:1px solid var(--line);font-size:14.5px}
+.md h1{font-size:19px;font-weight:800;margin:0 0 8px}
+.md h2{font-size:16.5px;font-weight:800;margin:22px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line);color:var(--gr)}
+.md h3{font-size:14.5px;font-weight:800;margin:16px 0 7px}
+.md p{margin:8px 0}
+.md blockquote{margin:9px 0;padding:8px 11px;background:var(--soft);border-left:3px solid var(--gr);
+  border-radius:0 8px 8px 0;color:var(--tx2);font-size:13px}
+.md ul{list-style:none;margin:7px 0}
+.md li{margin:5px 0;padding-left:14px;position:relative;font-size:14px}
+.md li:before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--gr)}
+.md hr{border:none;border-top:1px solid var(--line);margin:16px 0}
+.md a{color:var(--blu);word-break:break-all;font-size:12.5px}
+
+/* ---------- 添加到桌面引导条 ---------- */
+#install{display:none;margin:0 11px 12px;background:var(--gr-dk);color:#fff;border:none;
+  border-radius:12px;padding:12px;font-size:14.5px;font-weight:700;width:calc(100% - 22px);cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.3)}
+body.detail-open #install{margin-bottom:calc(76px + env(safe-area-inset-bottom))}
+.hintbar{display:none;margin:0 11px 12px;background:var(--card);border:1px solid var(--line);
+  border-left:3.5px solid var(--gr);border-radius:13px;padding:11px 12px 11px 13px;
+  box-shadow:0 2px 10px rgba(0,0,0,.28)}
+.hintbar.show{display:block}
+.hintbar .ht{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;letter-spacing:.2px}
+.hintbar .ht b{color:var(--gr-lt)}
+.hintbar .hs{font-size:11.5px;color:var(--mu);margin-top:4px;line-height:1.65}
+.hintbar .hs em{font-style:normal;color:var(--tx2);font-weight:700}
+.hintbar .hx{float:right;background:none;border:none;color:var(--mu);font-size:17px;
+  cursor:pointer;padding:0 2px;line-height:1;font-family:inherit}
+.foot{text-align:center;font-size:10.5px;color:var(--mu);padding:6px 0 4px;letter-spacing:.3px}
+
+/* =============== 底部导航栏（APP 式） =============== */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;
+  background:var(--tabbar-bg);
+  -webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px);
+  border-top:1px solid var(--line);
+  padding:7px 6px calc(env(safe-area-inset-bottom) + 7px);
+  box-shadow:0 -4px 18px rgba(0,0,0,.34)}
+.tabbar.show{display:flex}
+.tabbar button{flex:1;min-width:0;background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:2px 0 1px;color:var(--mu);font-family:inherit;
+  font-size:10px;font-weight:700;letter-spacing:.3px;transition:color .16s}
+.tabbar .iw{position:relative;display:block}
+.tabbar .iw i{width:46px;height:26px;border-radius:13px;display:flex;align-items:center;
+  justify-content:center;font-size:17px;line-height:1;font-style:normal;
+  transition:background .16s,transform .16s}
+.tabbar button.on{color:var(--gr-lt)}
+.tabbar button.on .iw i{background:var(--gr-l);transform:translateY(-1px)}
+.tabbar .iw em{position:absolute;top:-4px;right:-7px;min-width:15px;height:15px;
+  border-radius:8px;background:var(--red);color:#fff;font-size:9px;font-weight:800;
+  font-style:normal;display:flex;align-items:center;justify-content:center;
+  padding:0 3.5px;box-shadow:0 1px 3px rgba(192,57,43,.35)}
+.tabbar .lb{line-height:1}
+
+/* 详情页进入动画 + 底部留白给导航栏 */
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+body.detail-open main{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+#detail>*{animation:rise .32s ease both}
+.sec{scroll-margin-top:64px}
+
+</style>
+<link rel="stylesheet" href="css/smart.css">
+</head>
+<body>
+<header>
+  <button class="back" id="back" onclick="goHome()">&#8249;</button>
+  <h1 id="title">足球速报</h1>
+  <span class="sub" id="sub"></span>
+</header>
+<main>
+  <div id="list"></div>
+  <div id="detail" style="display:none"></div>
+</main>
+<button id="install" onclick="doInstall()">📲 添加到手机桌面（像 App 一样打开）</button>
+<div class="hintbar" id="hintbar">
+  <button class="hx" onclick="closeHint()" aria-label="关闭">×</button>
+  <div class="ht">📲 <b>装到桌面</b>，点图标直接全屏打开</div>
+  <div class="hs" id="hinttxt"></div>
+</div>
+<nav class="tabbar" id="tabbar" aria-label="板块导航"></nav>
+<div class="foot" id="foot"></div>
+
+<script src="report-data.js?v=1"></script>
+<script src="vendor/marked.min.js"></script>
+<script>
+var REPORTS = window.REPORTS || [];
+/* data.js 是否真的加载到了数据（404 或空文件都算没加载到）。
+   注意：下面这行必须在本文件开头取，不能在 renderList 里取 ——
+   顶层 var REPORTS 会把 window.REPORTS 覆盖成 []，导致检测永远失效。 */
+var DATA_OK = !!(window.REPORTS && window.REPORTS.length);
+
+/* ---- 数据结构规整（兼容旧数据） ---- */
+function arr(x){return Object.prototype.toString.call(x)==='[object Array]'?x:[];}
+function norm(r){
+  r.coverage = arr(r.coverage).map(function(c){
+    return typeof c==='string' ? {label:'', text:c} : {label:c.label||'', text:c.text||''};
+  });
+  r.matches = arr(r.matches);
+  r.matches.forEach(function(m){
+    m.goals = arr(m.goals);
+    m.events = arr(m.events).map(function(e){
+      return typeof e==='string' ? {label:'', text:e} : {label:e.label||'', text:e.text||''};
+    });
+    m.pre = arr(m.pre); m.post = arr(m.post); m.sources = arr(m.sources);
+  });
+  r.others = arr(r.others).map(function(o){
+    if(typeof o==='string') return {league:'', home:o, scoreHome:'', scoreAway:'', away:'', note:''};
+    return o;
+  });
+  ['stars','world','transfer','schedule'].forEach(function(k){
+    r[k] = arr(r[k]).map(function(it){
+      return typeof it==='string' ? {name:'', tag:'', text:it} : (it||{name:'',tag:'',text:''});
+    });
+  });
+  r.preview = arr(r.preview).map(function(g){
+    g = g || {};
+    return {group:g.group||'', items:arr(g.items).map(function(it){
+      it = it || {};
+      return {name:it.name||'', tag:it.tag||'', text:it.text||'',
+              detail:arr(it.detail).map(function(d){
+                return typeof d==='string' ? {name:'',tag:'',text:d} : (d||{name:'',tag:'',text:''});
+              })};
+    })};
+  }).filter(function(g){return g.items.length;});
+  r.refs = arr(r.refs);
+  return r;
+}
+REPORTS = REPORTS.map(norm);
+REPORTS.sort(function(a,b){return a.date < b.date ? 1 : -1;});
+
+var listEl=document.getElementById('list'), detailEl=document.getElementById('detail'),
+    titleEl=document.getElementById('title'), subEl=document.getElementById('sub'),
+    backEl=document.getElementById('back'), footEl=document.getElementById('foot');
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function inline(s){
+  var t=esc(s);
+  t=t.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  t=t.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
+  return t;
+}
+function totalGoals(r){var n=0;r.matches.forEach(function(m){n+=m.goals.length;});return n;}
+function evClass(l){
+  if(/红牌|罚下/.test(l))return 'red';
+  if(/黄牌/.test(l))return 'yel';
+  if(/点球/.test(l))return 'pur';
+  if(/争议|VAR|判罚|越位/.test(l))return 'ora';
+  if(/数据|统计/.test(l))return 'sla';
+  if(/备注|纪录|机会/.test(l))return 'gr';
+  return 'def';
+}
+function sideOf(g,m){
+  if(m.home && g.team && g.team.indexOf(m.home)===0) return 'h';
+  if(m.away && g.team && g.team.indexOf(m.away)===0) return 'a';
+  return 'h';
+}
+function goalMin(g){
+  var s=String(g.time||'').replace(/'/g,'');
+  var m=s.match(/^(\d+)(?:\+(\d+))?/);
+  if(!m) return 0;
+  return parseInt(m[1],10) + (m[2]?parseInt(m[2],10):0);
+}
+
+/* ================= 列表页 ================= */
+function renderList(){
+  detailEl.style.display='none'; listEl.style.display=''; backEl.style.display='none';
+  document.body.classList.remove('detail-open');
+  document.getElementById('tabbar').classList.remove('show');
+  titleEl.textContent='足球速报';
+  subEl.textContent = REPORTS.length ? ('共 '+REPORTS.length+' 期') : '';
+  footEl.textContent = REPORTS.length ? '每天 07:00 自动更新' : '';
+  if(!REPORTS.length){
+    var tip = DATA_OK ? '' : '日报数据没加载出来<br><span style="font-size:11.5px;opacity:.8">多半是浏览器缓存了旧页面，点下面按钮修复</span>';
+    listEl.innerHTML='<div class="empty">'+(tip||'还没有日报<br>定时任务每天早上 07:00 自动生成')+
+      '<div style="margin-top:14px"><button class="retry" onclick="hardReload()">↻ 重新加载（清缓存）</button></div></div>';
+    return;
+  }
+  var h = (window.FBSmart && FBSmart.entryBar) ? FBSmart.entryBar() : '';
+  REPORTS.forEach(function(r){
+    var sl='';
+    r.matches.slice(0,3).forEach(function(m){
+      if(!m.home)return;
+      sl+='<div class="sline"><span class="h">'+esc(m.home)+'</span>'+
+          '<span class="s">'+esc(m.scoreHome)+' - '+esc(m.scoreAway)+'</span>'+
+          '<span class="a">'+esc(m.away)+'</span></div>';
+    });
+    var pvn=0; arr(r.preview).forEach(function(g){ pvn+=arr(g.items).length; });
+    var dyn = (r.stars?r.stars.length:0)+(r.world?r.world.length:0)+
+              (r.transfer?r.transfer.length:0)+(pvn||(r.schedule?r.schedule.length:0));
+    h+='<div class="lcard" onclick="openReport(\''+esc(r.date)+'\')">'+
+       '<div class="lhead"><span class="dp">'+esc(r.date)+'</span>'+
+       '<span class="wk">周'+esc(r.weekday||'')+'</span>'+
+       '<span class="cnt">'+r.matches.length+'场 · '+totalGoals(r)+'球'+
+       (dyn?' · 动态'+dyn:'')+'</span></div>'+
+       '<div class="lbody">'+
+       '<div class="ttl">'+esc(r.title||'足球赛事速报')+'</div>'+
+       (r.summary?'<div class="sm">'+inline(r.summary)+'</div>':'')+
+       (sl?'<div class="scores">'+sl+'</div>':'')+
+       '<div class="more">查看完整日报 ›</div>'+
+       '</div></div>';
+  });
+  listEl.innerHTML=h;
+}
+
+/* ================= 详情页 ================= */
+function openReport(date){
+  var r=null;
+  for(var i=0;i<REPORTS.length;i++){ if(REPORTS[i].date===date){ r=REPORTS[i]; break; } }
+  if(!r)return;
+  listEl.style.display='none'; detailEl.style.display=''; backEl.style.display='';
+  document.body.classList.add('detail-open');
+  titleEl.textContent = r.date+' 周'+(r.weekday||'');
+  subEl.textContent='';
+  footEl.textContent='数据来源见文末附录';
+  detailEl.innerHTML = renderDetail(r);
+  buildTabbar(r);
+  window.scrollTo(0,0);
+  location.hash='#/r/'+date;
+}
+
+/* ================= 底部导航（APP 式板块跳转） ================= */
+var TAB_DEFS=[
+  ['matches','⚽','速报'],
+  ['others','📋','比分'],
+  ['dyn','🔔','动态'],
+  ['preview','📅','前瞻'],
+  ['refs','🔗','来源']
+];
+var spyLock=0;
+
+function buildTabbar(r){
+  var bar=document.getElementById('tabbar');
+  var pvn=0; arr(r.preview).forEach(function(g){ pvn+=arr(g.items).length; });
+  var counts={
+    matches:r.matches.length,
+    others:r.others.length,
+    dyn:(r.stars?r.stars.length:0)+(r.world?r.world.length:0)+(r.transfer?r.transfer.length:0),
+    preview:pvn||(r.schedule?r.schedule.length:0),
+    refs:arr(r.refs).length
+  };
+  var h='';
+  TAB_DEFS.forEach(function(d){
+    var n=counts[d[0]]||0;
+    if(!n) return;                       /* 没内容的板块不显示按钮 */
+    h+='<button data-t="'+d[0]+'"><span class="iw"><i>'+d[1]+'</i>'+
+       '<em>'+n+'</em></span><span class="lb">'+d[2]+'</span></button>';
+  });
+  bar.innerHTML=h;
+  bar.classList.add('show');
+  setActive('matches');
+  setupSpy();
+  spyLock=Date.now()+400;
+}
+
+function setActive(id){
+  var bar=document.getElementById('tabbar');
+  for(var i=0;i<bar.children.length;i++){
+    bar.children[i].classList.toggle('on', bar.children[i].getAttribute('data-t')===id);
+  }
+}
+
+function jumpTo(id){
+  var el=document.getElementById('sec-'+id);
+  if(!el) return;
+  spyLock=Date.now()+750;                /* 跳转期间暂停滚动监听，避免高亮乱跳 */
+  setActive(id);
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function setupSpy(){
+  var bar=document.getElementById('tabbar');
+  if(bar._spy) return;
+  bar._spy=true;
+  bar.addEventListener('click',function(e){
+    var b=e.target;
+    while(b && b!==bar && !b.getAttribute('data-t')) b=b.parentNode;
+    if(b && b!==bar) jumpTo(b.getAttribute('data-t'));
+  });
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll,{passive:true});
+}
+
+function onScroll(){
+  var bar=document.getElementById('tabbar');
+  if(!bar.classList.contains('show')) return;
+  if(Date.now()<spyLock) return;
+  var headH=62, best='', bestTop=-1e9;
+  TAB_DEFS.forEach(function(d){
+    var el=document.getElementById('sec-'+d[0]);
+    if(!el) return;
+    var top=el.getBoundingClientRect().top-headH;
+    if(top<=36 && top>bestTop){ bestTop=top; best=d[0]; }
+  });
+  if(best) setActive(best);
+}
+
+function renderDetail(r){
+  var h='';
+  h+='<div class="hero"><div class="d">'+esc(r.date)+' · 周'+esc(r.weekday||'')+'</div>'+
+     '<div class="t">'+esc(r.title||'足球赛事速报')+'</div>'+
+     '<div class="st">'+
+       '<span><b>'+r.matches.length+'</b>场重点</span>'+
+       '<span><b>'+totalGoals(r)+'</b>个进球</span>'+
+       (r.others.length?'<span><b>'+r.others.length+'</b>场其他</span>':'')+
+     '</div></div>';
+
+  if(r.coverage.length){
+    h+='<div class="cov">';
+    r.coverage.forEach(function(c){
+      h+='<div class="row">'+(c.label?'<div class="k">'+esc(c.label)+'</div>':'')+
+         '<div class="v">'+inline(c.text)+'</div></div>';
+    });
+    h+='</div>';
+  }
+
+  if(r.matches.length){
+    h+='<div class="sec" id="sec-matches"><span class="bar"></span><h2><span class="si">⚽</span>重点场次</h2>'+
+       '<span class="n">'+r.matches.length+' 场 · 逐球记录</span></div>';
+    r.matches.forEach(function(m,idx){ h+=matchCard(m,idx); });
+  }
+
+  if(r.others.length){
+    h+='<div class="sec" id="sec-others"><span class="bar"></span><h2><span class="si">📊</span>其他完赛比分</h2>'+
+       '<span class="n">'+r.others.length+' 场</span></div><div class="ocard">';
+    r.others.forEach(function(o){
+      var wh=(+o.scoreHome>+o.scoreAway), wa=(+o.scoreHome<+o.scoreAway);
+      h+='<div class="orow">'+
+         (o.league?'<div class="olg">'+esc(o.league)+'</div>':'')+
+         '<div class="oline">'+
+         '<span class="oth'+(wh?' w':'')+'">'+esc(o.home)+'</span>'+
+         '<span class="osc">'+esc(o.scoreHome)+' : '+esc(o.scoreAway)+'</span>'+
+         '<span class="ota'+(wa?' w':'')+'">'+esc(o.away)+'</span></div>'+
+         (o.note?'<div class="onote">'+inline(o.note)+'</div>':'')+
+         '</div>';
+    });
+    h+='</div>';
+  }
+
+  /* ---- 动态板块：球星动态 / 足坛动态 / 转会速递 ----
+     第一个有内容的动态板块挂 sec-dyn 锚点，供底部导航「动态」跳转 */
+  var dynUsed=false;
+  function dynAnchor(){ if(dynUsed) return ''; dynUsed=true; return ' id="sec-dyn"'; }
+  h+= iblocks(r,'stars','t-star','球星动态','★', dynAnchor());
+  h+= iblocks(r,'world','t-world','足坛动态','⚽', dynAnchor());
+  h+= iblocks(r,'transfer','t-trans','转会速递','⇄', dynAnchor());
+  h+= renderPreview(r,' id="sec-preview"');
+
+  if(r.refs.length){
+    h+='<div class="sec" id="sec-refs"><span class="bar"></span><h2><span class="si">🔗</span>来源附录</h2>'+
+       '<span class="n">'+r.refs.length+' 组</span></div>';
+    r.refs.forEach(function(g,idx){
+      var links=arr(g.links);
+      h+='<details class="ref"'+(idx===0?' open':'')+'><summary>'+esc(g.group||'来源')+
+         '<span class="cn">'+links.length+' 条</span></summary><div class="rlist">';
+      links.forEach(function(l){
+        if(l.url){ h+='<a href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.name||l.url)+'</a>'; }
+        else { h+='<span>'+esc(l.name)+'</span>'; }
+      });
+      h+='</div></details>';
+    });
+  }
+
+  if(!r.matches.length && !r.others.length && r.md){
+    h+='<div class="md">'+(typeof marked!=='undefined'&&marked&&marked.parse?marked.parse(r.md):esc(r.md))+'</div>';
+  }
+  return h;
+}
+
+/* 焦点前瞻：分版块渲染。新版数据走 r.preview，旧版数据退回扁平 schedule */
+function renderPreview(r,secAttr){
+  var gs=arr(r.preview);
+  if(!gs.length){
+    return iblocks(r,'schedule','t-sch','赛程预告','📅',secAttr);
+  }
+  var total=0;
+  gs.forEach(function(g){ total+=arr(g.items).length; });
+  var h='<div class="sec"'+(secAttr||'')+'><span class="bar"></span><h2><span class="si">🔮</span>焦点前瞻</h2>'+
+        '<span class="n">'+gs.length+' 个版块 · '+total+' 场</span></div>';
+  gs.forEach(function(g,gi){
+    var items=arr(g.items);
+    h+='<div class="pvwrap"><div class="pvcard">'+
+       '<div class="pvgrp p'+((gi%4)+1)+'">'+esc(g.group||'前瞻')+
+       '<span class="cn">'+items.length+' 场</span></div>';
+    items.forEach(function(it){
+      var name=it.name||'', text=it.text||'', det=arr(it.detail);
+      var tm='', lg=name, di=name.indexOf('·');
+      if(di>0){ tm=name.slice(0,di).trim(); lg=name.slice(di+1).trim(); }
+      h+='<div class="pvitem"><div class="pvtop">'+
+         (tm?'<span class="pvtime">'+esc(tm)+'</span>':'')+
+         (lg?'<span class="pvlg">'+esc(lg)+'</span>':'')+
+         (text?'<span class="pvvs">'+inline(text)+'</span>':'')+
+         '</div>';
+      if(det.length){
+        h+='<div class="pvd">';
+        det.forEach(function(d){
+          if(!d.name && !d.text) return;
+          h+='<div class="pvr">'+(d.name?'<span class="pvl">'+esc(d.name)+'</span>':'')+
+             '<span class="pvt">'+inline(d.text)+'</span></div>';
+        });
+        h+='</div>';
+      }
+      h+='</div>';
+    });
+    h+='</div></div>';
+  });
+  return h;
+}
+
+/* 通用动态板块渲染：stars / world / transfer / schedule 共用。
+   secAttr：可选，往板块标题上挂 id（供底部导航锚点跳转） */
+function iblocks(r,key,cls,label,icon,secAttr){
+  var list=arr(r[key]);
+  if(!list.length) return '';
+  var h='<div class="sec"'+(secAttr||'')+'><span class="bar"></span><h2>'+label+'</h2>'+
+        '<span class="n">'+list.length+' 条</span></div><div class="icard">';
+  list.forEach(function(it){
+    var name=it.name||'', tag=it.tag||'', text=it.text||'';
+    var initial=name ? name.slice(0,1) : icon;
+    h+='<div class="irow '+cls+'">'+
+       '<div class="ico">'+esc(initial)+'</div>'+
+       '<div class="ibody"><div class="ihead">'+
+       (name?'<span class="iname">'+esc(name)+'</span>':'')+
+       (tag?'<span class="itag">'+esc(tag)+'</span>':'')+
+       '</div>'+
+       (text?'<div class="itext">'+inline(text)+'</div>':'')+
+       '</div></div>';
+  });
+  return h+'</div>';
+}
+
+function matchCard(m,idx){  var win = (+m.scoreHome > +m.scoreAway) ? 'h' : (+m.scoreHome < +m.scoreAway ? 'a' : '');
+  var h='<div class="mcard">';
+
+  /* 记分牌头部 */
+  h+='<div class="mhead"><div class="mtop">';
+  h+='<span class="mno">'+(idx+1)+'</span>';
+  if(m.league) h+='<span class="lg">'+esc(m.league)+'</span>';
+  h+='</div><div class="score">'+
+     '<div class="tm r'+(win==='h'?' w':'')+'"><div class="nm">'+esc(m.home)+'</div><div class="sd">主队</div></div>'+
+     '<div class="num">'+esc(m.scoreHome)+' - '+esc(m.scoreAway)+'</div>'+
+     '<div class="tm'+(win==='a'?' w':'')+'"><div class="nm">'+esc(m.away)+'</div><div class="sd">客队</div></div>'+
+     '</div>';
+  if(m.venue){
+    h+='<div class="mmeta">';
+    m.venue.split(/[；;]/).forEach(function(c){ if(c.trim()) h+='<span>'+esc(c.trim())+'</span>'; });
+    h+='</div>';
+  }
+  h+='</div>';
+
+  /* 进球分布轴 */
+  if(m.goals.length) h+=goalBar(m);
+
+  /* 进球全记录 */
+  if(m.goals.length){
+    h+='<div class="blk"><h4><i></i>进球全记录<span class="cn">'+m.goals.length+' 球</span></h4>';
+    m.goals.forEach(function(g){ h+=goalRow(g,m); });
+    h+='</div>';
+  }
+
+  /* 其他重大事件 */
+  if(m.events.length){
+    h+='<div class="blk"><h4><i></i>其他重大事件</h4><div class="evs">';
+    m.events.forEach(function(e){
+      h+='<div class="ev"><span class="evl '+evClass(e.label)+'">'+esc(e.label||'事件')+'</span>'+
+         '<span class="evt">'+(e.text?inline(e.text):'—')+'</span></div>';
+    });
+    h+='</div></div>';
+  }
+
+  /* 采访 */
+  if(m.pre.length || m.post.length){
+    h+='<div class="blk"><h4><i></i>赛前 / 赛后声音</h4>';
+    if(m.pre.length){
+      h+='<div class="qtag">赛前</div>';
+      m.pre.forEach(function(q){ h+=quoteBox(q,false); });
+    }
+    if(m.post.length){
+      h+='<div class="qtag mt">赛后</div>';
+      m.post.forEach(function(q){ h+=quoteBox(q,true); });
+    }
+    h+='</div>';
+  }
+
+  /* 来源 */
+  if(m.sources.length){
+    h+='<div class="blk"><h4><i></i>本场来源</h4><div class="srcs">';
+    m.sources.forEach(function(s){
+      if(s.url){ h+='<a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.name)+'</a>'; }
+      else { h+='<span>'+esc(s.name)+'</span>'; }
+    });
+    h+='</div></div>';
+  }
+  return h+'</div>';
+}
+
+/* 进球时间分布轴：自动避让，避免时间挨太近的点叠在一起 */
+function layoutPcts(vals, lo, hi, gap){
+  var n=vals.length; if(!n) return [];
+  var scale=Math.max(90, Math.max.apply(null, vals));
+  var p=[], i;
+  for(i=0;i<n;i++) p.push(lo + (hi-lo)*vals[i]/scale);
+  for(i=1;i<n;i++) if(p[i] < p[i-1]+gap) p[i]=p[i-1]+gap;
+  if(p[n-1]>hi){
+    p[n-1]=hi;
+    for(i=n-2;i>=0;i--) if(p[i] > p[i+1]-gap) p[i]=p[i+1]-gap;
+  }
+  for(i=0;i<n;i++) if(p[i]<lo) p[i]=lo;
+  return p;
+}
+
+function goalBar(m){
+  var home=[], away=[];
+  m.goals.forEach(function(g){
+    (sideOf(g,m)==='h' ? home : away).push({g:g, t:goalMin(g)});
+  });
+  function row(list, cls){
+    if(!list.length) return '';
+    list.sort(function(a,b){return a.t-b.t;});
+    var p=layoutPcts(list.map(function(x){return x.t;}), 3, 97, 10);
+    var s='';
+    list.forEach(function(x,i){
+      s+='<span class="tld '+cls+'" style="left:'+p[i].toFixed(1)+'%">'+
+         '<span class="lb">'+esc(x.g.time||'')+'</span><span class="dt"></span></span>';
+    });
+    return s;
+  }
+  return '<div class="tl">'+
+    '<div class="tlcap"><span class="kh"><i></i>'+esc(m.home||'主队')+'</span>'+
+    '<span style="flex:1"></span>'+
+    '<span class="ka"><i></i>'+esc(m.away||'客队')+'</span></div>'+
+    '<div class="tlrow up">'+row(home,'h')+'</div>'+
+    '<div class="tlaxis"><span class="t0">0\'</span><span class="t9">90\'</span></div>'+
+    '<div class="tlrow dn">'+row(away,'a')+'</div>'+
+    '</div>';
+}
+
+function goalRow(g,m){
+  var side=sideOf(g,m);
+  var a='';
+  if(g.assistType==='助攻') a='<span class="asst y">助攻 · '+esc(g.assist||'未记录')+'</span>';
+  else if(g.assistType==='无助攻') a='<span class="asst n">无助攻</span>';
+  else if(g.assistType==='乌龙') a='<span class="asst o">乌龙球'+(g.assist?' · '+esc(g.assist):'')+'</span>';
+  return '<div class="goal"><div class="tm">'+esc(g.time||'')+'</div>'+
+    '<div class="ghd"><span class="team '+(side==='h'?'home':'away')+'"><i></i>'+esc(g.team||'')+'</span>'+
+    '<span class="who">'+esc(g.scorer||'')+'</span>'+a+'</div>'+
+    (g.desc?'<div class="gdesc">'+inline(g.desc)+'</div>':'')+
+    '</div>';
+}
+
+function quoteBox(q,post){
+  return '<div class="qbox'+(post?' post':'')+'">'+
+    (q.speaker?'<div class="sp">'+esc(q.speaker)+'</div>':'')+
+    '<div class="qt">'+inline(q.quote)+'</div></div>';
+}
+
+/* ================= 路由 ================= */
+function goHome(){ location.hash=''; renderList(); window.scrollTo(0,0); }
+function route(){
+  var m=location.hash.match(/^#\/r\/(.+)$/);
+  if(m){
+    openReport(decodeURIComponent(m[1]));
+  } else {
+    renderList();
+  }
+}
+
+var deferred=null;
+/* ============ 打开即用：安装引导 ============ */
+function closeHint(){
+  try{localStorage.setItem('fb_hint','1');}catch(e){}
+  document.getElementById('hintbar').className='hintbar';
+}
+function setupHint(){
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(standalone) return;                              // 已经是 App 模式，不提示
+  try{ if(localStorage.getItem('fb_hint')) return; }catch(e){}
+  var ua = navigator.userAgent;
+  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|Android/.test(ua);
+  var txt;
+  if(isIOS && isSafari)      txt = '点底部中间的 <em>分享 ⬆️</em> → 选 <em>添加到主屏幕</em> → 右上角「添加」。';
+  else if(isIOS)             txt = '请用 <em>Safari</em> 打开本页，再点分享 ⬆️ → <em>添加到主屏幕</em>。';
+  else if(/MicroMessenger/.test(ua)) txt = '微信里装不了，请点右上角 <em>···</em> → <em>在浏览器打开</em>，再添加到桌面。';
+  else                       txt = '点浏览器菜单（右上角 <em>⋮</em>）→ <em>添加到主屏幕 / 安装应用</em>。';
+  document.getElementById('hinttxt').innerHTML = txt + '装好后点桌面图标即可全屏打开，<em>不用每次输网址</em>。';
+  document.getElementById('hintbar').className='hintbar show';
+}
+
+/* 重新加载：清掉离线缓存和旧 service worker，等清完再刷新 */
+function hardReload(){
+  var done=false;
+  function go(){ if(done)return; done=true; try{location.reload(true);}catch(e){location.href=location.href;} }
+  try{
+    var p1=(window.caches&&caches.keys)?caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k);}));}):Promise.resolve();
+    var p2=(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)?navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister();}));}):Promise.resolve();
+    Promise.all([p1,p2]).then(go,go);
+    setTimeout(go,1500);
+  }catch(e){go();}
+}
+/* 兜底复活：data.js 没被 <script> 加载成功时，页面自己去网络上把
+   数据抓回来重新渲染。fetch + no-store 保证拿到的一定是线上最新数据，
+   设备上的任何缓存（Service Worker / HTTP 缓存）都拦不住它。 */
+function revive(){
+  try{
+    if(DATA_OK) return;
+    if(sessionStorage.getItem('fb_revive')) return;   // 本次会话只救一次，防循环
+    sessionStorage.setItem('fb_revive','1');
+    fetch('report-data.js?f='+Date.now(),{cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+      .then(function(t){
+        var m = t.match(/window\.REPORTS\s*=\s*(\[[\s\S]*\]);?\s*$/);
+        if(!m || !m[1]) throw new Error('数据格式不对');
+        window.REPORTS = JSON.parse(m[1]);
+        REPORTS = (window.REPORTS||[]).map(norm);
+        REPORTS.sort(function(a,b){return a.date < b.date ? 1 : -1;});
+        if(!REPORTS.length) throw new Error('数据是空的');
+        DATA_OK = true;
+        route();                                        // 数据到手，重新渲染
+      })
+      .catch(function(e){ console.warn('复活失败：', e); });
+  }catch(e){}
+}
+setTimeout(revive, 600);
+/* 更深的问题（连 fetch 都救不回，比如页面本身也是旧的）：
+   1.8 秒后清缓存重载一次，彻底重来 */
+(function(){
+  try{
+    if(DATA_OK) return;
+    if(sessionStorage.getItem('fb_fix')) return;
+    sessionStorage.setItem('fb_fix','1');
+    setTimeout(function(){ if(!DATA_OK) hardReload(); }, 1800);
+  }catch(e){}
+})();
+
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault(); deferred=e;
+  document.getElementById('install').style.display='';
+  document.getElementById('hintbar').className='hintbar';
+});
+function doInstall(){
+  if(deferred){deferred.prompt();deferred=null;document.getElementById('install').style.display='none';}
+  else{alert('iPhone：点底部「分享」→「添加到主屏幕」\n安卓：浏览器菜单→「添加到主屏幕 / 安装应用」');}
+}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+setupHint();
+route();
+window.addEventListener('hashchange',function(){route();});
+</script>
+<script src="js/fb-smart.js"></script>
+</body>
+</html>

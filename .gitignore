@@ -1,0 +1,52 @@
+# ============================================================
+# 足球速报 · 仓库忽略规则
+# ============================================================
+
+# ---- 二进制安装包（体积大，走站点下载，不进仓库）----
+*.apk
+*.aab
+*.apks
+*.zip
+*.exe
+
+# ---- 签名密钥（绝对不要进公开仓库）----
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+.env
+.env.*
+
+# ---- Flutter / Android 构建产物 ----
+足球速报_app/dist/
+足球速报_app/build/
+足球速报_app/.dart_tool/
+足球速报_app/.gradle/
+足球速报_app/.cxx/
+足球速报_app/.flutter-plugins
+足球速报_app/.flutter-plugins-dependencies
+足球速报_app/**/build/
+足球速报_app/android/.gradle/
+足球速报_app/android/local.properties
+足球速报_app/android/key.properties
+
+# ---- IDE / 编辑器 ----
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ---- 本地临时与中间产物 ----
+_work/
+_chk/
+_toolchain/
+_cache/
+__pycache__/
+*.pyc
+*.log
+
+# ---- WorkBuddy 本地记忆（不属于项目内容）----
+.workbuddy/
+*.genie
